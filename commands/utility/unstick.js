@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder, PermissionsBitField, ChannelType } = require('discord.js');
 const { appendToSheet, getSheetData, updateUserData, deleteSheet, createSheet, checkSheetExists, deleteRowByChannelId } = require('../../utils/sheetsUtils.js');
 const wait = require('node:timers/promises').setTimeout;
-const { role1Id, role2Id, role3Id } = require('../../config.json');
+const { consultantRoleId, teamRoleId, supportRoleId } = require('../../config.json');
 const { checkRoles } = require('../../utils/functions.js');
 
 module.exports = {
@@ -12,7 +12,7 @@ module.exports = {
     // .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild),
     async execute(interaction) {
 
-        const permCheck = await checkRoles(interaction.member, [role1Id, role2Id, role3Id]);
+        const permCheck = await checkRoles(interaction.member, [consultantRoleId, teamRoleId, supportRoleId]);
         if (!permCheck) {
             await interaction.reply({ content: '> **You cannot use this command.**\n```You do not have the permission to use this.```', ephemeral: true });
             return;

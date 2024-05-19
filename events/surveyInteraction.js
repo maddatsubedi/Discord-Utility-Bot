@@ -19,7 +19,10 @@ module.exports = {
 
         let customId = await interaction.customId;
 
-        const sheetName = `surveys-${interaction.channel.id}`;
+        const configSheetName = `survey-config`;
+        const configSheetRange = `A:F`;
+
+        const sheetName = `surveys`;
         const range = 'A:G';
 
         if (!customId.startsWith("survey:")) {
@@ -28,7 +31,12 @@ module.exports = {
 
         await interaction.deferReply({ ephemeral: true });
 
-        const checkSheet = await checkSheetExists(`surveys-${interaction.channel.id}`);
+        const checkConfigSheet = await checkSheetExists(`survey-config`);
+        if (!checkConfigSheet) {
+            await interaction.editReply({ content: '> **The survey-config system is not found in the database.**\n```Please report this to the support team```', ephemeral: true });
+            return;
+        }
+        const checkSheet = await checkSheetExists(`surveys`);
         if (!checkSheet) {
             await interaction.editReply({ content: '> **The survey system is not found in the database.**\n```Please report this to the support team```', ephemeral: true });
             return;
@@ -36,7 +44,7 @@ module.exports = {
 
 
         let fetchedData;
-        await getSheetData(sheetName, range)
+        await getSheetData(configSheetName, configSheetRange)
             .then((data) => {
                 // console.log('Data fetched successfully.');
                 fetchedData = data;
@@ -46,10 +54,10 @@ module.exports = {
                 console.error('An error occurred:', error);
             });
         // console.log(fetchedData);
-        const check = await fetchedData.find((row) => row[5] == 'closed');
+        const check = await fetchedData.find((row) => row[1] == interaction.channel.id);
         let closed;
         if (check) {
-            closed = check.every(element => element === 'closed');
+            closed = check[2] === 'closed';
         }
 
         if (closed) {
@@ -61,8 +69,17 @@ module.exports = {
 
         const date = new Date().toUTCString();
         let vote = await interaction.customId.split(":")[1];
-        const data = `${interaction.user.username},.,${interaction.user.id},.,${interaction.channel.name},.,${interaction.channel.id},.,${vote},.,${date},.,${`N/A`}`;
+        const data = `${interaction.user.username},.,${interaction.user.id},.,${vote},.,${interaction.channel.name},.,${interaction.channel.id},.,${date},.,${`N/A`}`;
 
+        await getSheetData(sheetName, range)
+            .then((data) => {
+                // console.log('Data fetched successfully.');
+                fetchedData = data;
+                // You can access and process the fetched data here
+            })
+            .catch((error) => {
+                console.error('An error occurred:', error);
+            });
 
         const user = await fetchedData.find((row) => row[1] == interaction.user.id);
 

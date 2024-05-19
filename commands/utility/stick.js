@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder, PermissionsBitField, ChannelType } = require('discord.js');
 const { appendToSheet, getSheetData, updateUserData, deleteSheet, createSheet, checkSheetExists } = require('../../utils/sheetsUtils.js');
 const wait = require('node:timers/promises').setTimeout;
-const { role1Id, role2Id, role3Id } = require('../../config.json');
+const { consultantRoleId, teamRoleId, supportRoleId } = require('../../config.json');
 const { checkRoles } = require('../../utils/functions.js');
 
 module.exports = {
@@ -9,22 +9,28 @@ module.exports = {
         .setName('stick')
         .setDescription('Stick a message to the channel')
         .addChannelOption(option => option.setName('channel').setDescription('The channel you want to send the sticky message in').addChannelTypes(ChannelType.GuildText).setRequired(true))
-        .addStringOption(option => option.setName('message').setDescription('The message link').setRequired(true)),
+        .addStringOption(option => option.setName('message-link').setDescription('The message link').setRequired(true)),
     // .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild),
     async execute(interaction) {
 
-        const permCheck = await checkRoles(interaction.member, [role1Id, role2Id, role3Id]);
+        const permCheck = await checkRoles(interaction.member, [consultantRoleId, teamRoleId, supportRoleId]);
         if (!permCheck) {
             await interaction.reply({ content: '> **You cannot use this command.**\n```You do not have the permission to use this.```', ephemeral: true });
             return;
         }
 
         const channel = interaction.options.getChannel('channel');
-        const messageId = interaction.options.get('message').value;
+        const messageId = interaction.options.get('message-link').value;
 
         await interaction.deferReply({ ephemeral: true });
 
         const ids = await messageId.match(/\d+/g);
+
+        if (!ids) {
+            await interaction.editReply({ content: '> **Message link is not valid.**\n```Please use the valid message link.```', ephemeral: true });
+            return;
+        }
+
         const message = await interaction.guild.channels.cache.get(ids[1])?.messages.fetch(ids[2]).catch(err => null) ?? null;
 
         if (!message) {

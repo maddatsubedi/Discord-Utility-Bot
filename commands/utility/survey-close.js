@@ -1,6 +1,6 @@
 const { PermissionsBitField, EmbedBuilder, ChannelType, ActionRowBuilder, SlashCommandBuilder, ButtonStyle, ButtonBuilder } = require('discord.js');
-const { appendToSheet, getSheetData, updateUserData, deleteSheet, createSheet, checkSheetExists } = require('../../utils/sheetsUtils.js');
-const { role1Id, role2Id, role3Id } = require('../../config.json');
+const { appendToSheet, getSheetData, updateUserData, updateSurveyData, deleteSheet, createSheet, checkSheetExists } = require('../../utils/sheetsUtils.js');
+const { consultantRoleId, teamRoleId, supportRoleId } = require('../../config.json');
 const { checkRoles } = require('../../utils/functions.js');
 
 
@@ -12,7 +12,7 @@ module.exports = {
         .addChannelOption(option => option.setName('channel').setDescription('The channel where survey message in').addChannelTypes(ChannelType.GuildText).setRequired(true)),
     async execute(interaction) {
 
-        const permCheck = await checkRoles(interaction.member, [role1Id, role2Id, role3Id]);
+        const permCheck = await checkRoles(interaction.member, [consultantRoleId, teamRoleId, supportRoleId]);
         if (!permCheck) {
             await interaction.reply({ content: '> **You cannot use this command.**\n```You do not have the permission to use this.```', ephemeral: true });
             return;
@@ -22,9 +22,16 @@ module.exports = {
 
         await interaction.deferReply({ ephemeral: true });
 
-        const data = `closed,.,closed,.,closed,.,closed,.,closed,.,closed,.,closed`;
+        const configSheetName = `survey-config`;
+        const configSheetRange = `A:F`;
 
-        const checkSheet = await checkSheetExists(`surveys-${channel.id}`);
+        const checkConfigSheet = await checkSheetExists(`survey-config`);
+        if (!checkConfigSheet) {
+            await interaction.editReply({ content: '> **The survey-config system is not found in the database.**\n```Please report this to the support team```', ephemeral: true });
+            return;
+        };
+
+        const checkSheet = await checkSheetExists(`surveys`);
         if (!checkSheet) {
             await interaction.editReply({ content: '> **The survey system is not found in the database.**\n```Please delete the survey post manually```', ephemeral: true });
             return;
@@ -32,7 +39,7 @@ module.exports = {
 
         // console.log(fetchedData);
         let fetchedData;
-        await getSheetData(`surveys-${channel.id}`, 'A:G')
+        await getSheetData(configSheetName, configSheetRange)
             .then((data) => {
                 // console.log('Data fetched successfully.');
                 fetchedData = data;
@@ -41,11 +48,11 @@ module.exports = {
             .catch((error) => {
                 console.error('An error occurred:', error);
             });
-        const check = await fetchedData.find((row) => row[5] == 'closed');
-
+        // console.log(fetchedData);
+        const check = await fetchedData.find((row) => row[1] == interaction.channel.id);
         let closed;
         if (check) {
-            closed = check.every(element => element === 'closed');
+            closed = check[2] === 'closed';
         }
 
         if (closed) {
@@ -53,13 +60,7 @@ module.exports = {
             return;
         }
 
-        await appendToSheet(`surveys-${channel.id}`, 'A:G', data)
-            .then(() => {
-                // console.log('Data appended successfully.');
-            })
-            .catch((error) => {
-                console.error('An error occurred:', error);
-            });
+        await updateSurveyData(configSheetName, 'open', 'closed');
 
         await interaction.editReply({ content: '> **The survey system is closed successfully.**\n```You can use /survey to create new survey post.```', ephemeral: true });
 

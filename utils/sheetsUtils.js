@@ -212,6 +212,48 @@ const updateSheetData = async (sheetName, messageId, lastMessageId) => {
   }
 };
 
+const updateSurveyData = async (sheetName, status, newstatus) => {
+  const auth = await google.auth.getClient({
+    credentials,
+    scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+  });
+
+  const sheets = google.sheets({ version: 'v4', auth });
+
+  try {
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SPREADSHEET_ID,
+      range: `${sheetName}!A:D`,
+    });
+
+    const rows = response.data.values;
+    if (rows.length > 1) {
+      const rowIndex = rows.findIndex((row) => row[2] === status);
+      if (rowIndex > 0) {
+        const date = new Date().toUTCString();
+        rows[rowIndex][2] = newstatus; // Update the 'Moderator' column
+
+        const updateResponse = await sheets.spreadsheets.values.update({
+          spreadsheetId: SPREADSHEET_ID,
+          range: `${sheetName}!A${rowIndex + 1}:H${rowIndex + 1}`,
+          valueInputOption: 'USER_ENTERED',
+          resource: {
+            values: [rows[rowIndex]],
+          },
+        });
+
+        // console.log(`${updateResponse.data.updatedCells} cells updated.`);
+      } else {
+        console.log('Survey data not found.');
+      }
+    } else {
+      console.log('No data found.');
+    }
+  } catch (error) {
+    console.error('The API returned an error:', error);
+  }
+};
+
 // const createSheet = async (sheetName) => {
 //   try {
 //     const auth = await google.auth.getClient({
@@ -444,5 +486,62 @@ const deleteRowByChannelId = async (sheetName, channelId) => {
   }
 };
 
+const deleteRowByIdSurvey = async (sheetName, channelId) => {
+  try {
+    const auth = await google.auth.getClient({
+      credentials,
+      scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+    });
 
-module.exports = { appendToSheet, getSheetData, getFullSheetData, updateUserData, updateSheetData, createSheet, deleteSheet, checkSheetExists, deleteRowByChannelId };
+    const sheets = google.sheets({ version: 'v4', auth });
+
+    // Get the sheet properties to retrieve the sheet ID
+    const sheetProperties = await sheets.spreadsheets.get({
+      spreadsheetId: SPREADSHEET_ID,
+    });
+
+    const sheetId = sheetProperties.data.sheets.find(sheet => sheet.properties.title === sheetName)?.properties.sheetId;
+
+    if (!sheetId) {
+      console.error(`Sheet '${sheetName}' not found.`);
+      return;
+    }
+
+    // Get all the data from the sheet
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SPREADSHEET_ID,
+      range: `${sheetName}!A:F`, // Adjust the range as needed
+    });
+
+    
+    const values = response.data.values;
+
+    // Filter out the rows with the specified channel ID in the second column
+    const rowsToRemove = values.filter(row => row[1] === channelId);
+
+    if (rowsToRemove.length > 0) {
+      // Create a batch update request to clear the contents of the rows
+      const batchUpdateRequest = {
+        spreadsheetId: SPREADSHEET_ID,
+        resource: {
+          requests: rowsToRemove.map(row => ({
+            updateCells: {
+              range: { sheetId: sheetId, startRowIndex: values.indexOf(row), endRowIndex: values.indexOf(row) + 1, startColumnIndex: 0, endColumnIndex: row.length },
+              fields: 'userEnteredValue', // Clear user entered value
+            },
+          })),
+        },
+      };
+
+      // Execute the batch update request
+      await sheets.spreadsheets.batchUpdate(batchUpdateRequest);
+    } else {
+      console.log(`No data found for Channel ID ${channelId}.`);
+    }
+  } catch (error) {
+    console.error('The API returned an error:', error);
+  }
+};
+
+
+module.exports = { appendToSheet, getSheetData, getFullSheetData, updateUserData, updateSheetData, updateSurveyData, createSheet, deleteSheet, checkSheetExists, deleteRowByChannelId, deleteRowByIdSurvey };
