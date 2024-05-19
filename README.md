@@ -4,28 +4,38 @@
 <img align="center" src="./public/favicon-96.png" alt="" width="50" height="50">
 </h1>
 
-**This is a simple TodoApp built with React.js. It allows users to manage their tasks by adding, editing, marking as completed, and deleting tasks from the list.**
-
-## Live Demo
-
-You can access the live demo of this TodoApp on Netlify:
-<br>
-Netlify: [React ToDo App Demo](https://ritoncharlox-react-todo-app.netlify.app/)
-
-## How to Use
-1. **Add a new task**: Type your task title and description into the input fields provided and press Enter or click the Add button.
-2. **Edit a task**: Click on the Edit button next to the task you want to edit. Update the title and description as needed in the input fields and click the Save button.
-3. **Mark a task as completed**: Click on the checkbox next to the task.
-4. **Delete a task**: Click on the Delete button next to the task.
-
+**Welcome to the Utility Discord Bot! This bot offers a range of helpful commands to enhance your server's functionality.**
 
 ## Features
 
-- Add new tasks to the list.
-- Edit existing tasks.
-- Mark tasks as completed.
-- Delete tasks from the list.
-- Simple and intuitive user interface
+<h3>
+<span> Survey System </span>
+</h3>
+
+**Create and manage surveys within your Discord server to gather feedback and opinions from your community.**
+
+<h3>
+<span> Sticky Messages </span>
+</h3>
+
+- /stick: Stick a message in a specified channel.
+- /unstick: Unstick the previous sticky message.
+
+<h3>
+<span> Onboarding </span>
+</h3>
+
+- /onboard: Onboard new members to the server with a welcome message and relevant information.
+
+<h3>
+<span> Group Call Notifications </span>
+</h3>
+
+- /group-call: Send direct messages to members with a specific role to notify them about an upcoming group call.
+
+## Data Storage
+
+The bot stores survey data and sticky message information using Google Sheets as a database.
 
 ## Technologies Used
 
