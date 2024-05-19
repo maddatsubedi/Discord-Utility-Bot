@@ -1,71 +1,120 @@
 <br>
 <h1 align=center>
 <span> Discord Utility Bot </span>
-<img align="center" src="./public/favicon-96.png" alt="" width="50" height="50">
+<img align="center" src="./icons8-chatbot-94.png" alt="image" width="50" height="50">
 </h1>
 
-**Welcome to the Utility Discord Bot! This bot offers a range of helpful commands to enhance your server's functionality.**
+**Welcome to the Utility Discord Bot! This bot is designed to enhance your Discord server's functionality by providing a variety of helpful features, including survey systems, sticky messages, onboarding for new members, and group call notifications.**
 
 ## Features
 
-<h3>
-<span> Survey System </span>
-</h3>
+<h3> Survey System </h3>
 
-**Create and manage surveys within your Discord server to gather feedback and opinions from your community.**
+Create and manage surveys within your Discord server to gather feedback and opinions from your community.
 
-<h3>
-<span> Sticky Messages </span>
-</h3>
+<h3> Sticky Messages </h3>
 
-- /stick: Stick a message in a specified channel.
-- /unstick: Unstick the previous sticky message.
+Keep important messages at the top of your channels so they are always visible to your members.
 
-<h3>
-<span> Onboarding </span>
-</h3>
+<h3> Onboarding </h3>
 
-- /onboard: Onboard new members to the server with a welcome message and relevant information.
+Welcome and guide new members with a structured onboarding process to ensure they have all the information they need.
 
-<h3>
-<span> Group Call Notifications </span>
-</h3>
+<h3> Group Call Notifications </h3>
 
-- /group-call: Send direct messages to members with a specific role to notify them about an upcoming group call.
+Easily notify specific roles about upcoming group calls with direct messages.
+
+## Commands
+
+<h3> Survey </h3>
+
+- `/survey [channel]` : Set up a survey in the specified channel.
+- `/survey-close` : Close an existing survey.
+- `/survey-delete` : Delete an existing survey.
+
+<h3> Sticky Messages </h3>
+
+- `/stick [channel] [message-link]` : Stick a message in the specified channel.
+- `/unstick: Unstick the previous sticky message.
+
+<h3> Onboarding </h3>
+
+- `/onboard [member]` : Onboard a new member to the server.
+
+<h3> Group Call </h3>
+
+- `/group-call [role]` : Notify members of an upcoming group call by sending DMs to a specific role.
 
 ## Data Storage
 
-The bot stores survey data and sticky message information using Google Sheets as a database.
+The bot leverages Google Sheets as a database to store survey data and sticky message information, ensuring data is organized and easily accessible.
 
 ## Technologies Used
 
-&emsp; ![React](https://img.shields.io/badge/react.js-%23563D7C.svg?style=for-the-badge&logo=react&logoColor=white)
+&emsp; ![Node.js](https://img.shields.io/badge/node.js-%23563D7C.svg?style=for-the-badge&logo=node.js&logoColor=white)
 <br>
-&emsp; ![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)
+&emsp; ![Discord.js](https://img.shields.io/badge/discord.js-%23E34F26.svg?style=for-the-badge&logo=discord&logoColor=white)
 <br>
-&emsp; ![CSS3](https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white)
+&emsp; ![Google Sheets API](https://img.shields.io/badge/Google%20Sheets%20API-%231572B6.svg?style=for-the-badge&logo=googlesheets&logoColor=white)
 
 ## Getting Started
 
+### Prerequisites
+- Node.js
+- Discord.js library
+- Google Sheets API setup
+
+### Installation
+
 To run this project locally, follow these steps:
 
-- Clone this repository:
+- Clone this repository::
 ```bash
-git clone https://github.com/ritoncharlox/React-ToDo-App.git
+git clone https://github.com/ritoncharlox/Discord-Utility-Bot.git
 ```
 - Access the cloned directory:
 ```
-cd React-ToDo-App
+cd Discord-Utility-Bot
 ```
 - Install dependencies:
 ```
 npm install
 ```
-- Start the development server:
-```
-npm start
-```
-- Open your browser and visit [http://localhost:3000](http://localhost:3000) to view the app.
+- Set up your configuration:
+    - `config.json` : This file contains your Discord bot token, client ID, guild ID, client color, and role IDs. Fill in the appropriate values for each field. For example:
+    ```json
+    {
+  "token": "YOUR_DISCORD_BOT_TOKEN",
+  "clientId": "YOUR_CLIENT_ID",
+  "guildId": "YOUR_GUILD_ID",
+  "clientColor": "2f3136",
+  "role1Id": "ROLE_1_ID",
+  "role2Id": "ROLE_2_ID",
+  "role3Id": "ROLE_3_ID"
+  }
+    ```
+    - `trape-327504-ce5999dc2d27.json` : This JSON file contains your Google Sheets API credentials. You can obtain these credentials from the Google Cloud Console. Fill in the appropriate values for each field. For example:
+    ```json
+    {
+  "type": "YOUR_TYPE",
+  "project_id": "YOUR_PROJECT_ID",
+  "private_key_id": "YOUR_PRIVATE_KEY_ID",
+  "private_key": "YOUR_PRIVATE_KEY",
+  "client_email": "YOUR_CLIENT_EMAIL",
+  "client_id": "YOUR_CLIENT_ID",
+  "auth_uri": "YOUR_AUTH_URI",
+  "token_uri": "YOUR_TOKEN_URI",
+  "auth_provider_x509_cert_url": "YOUR_AUTH_PROVIDER_X509_CERT_URL",
+  "client_x509_cert_url": "YOUR_CLIENT_X509_CERT_URL",
+  "universe_domain": "YOUR_UNIVERSE_DOMAIN"
+  }
+    ```
+
+- Start the bot:
+    ```
+    node index.js
+    ```
+- Make sure to replace "YOUR_DISCORD_BOT_TOKEN", "YOUR_CLIENT_ID", "YOUR_GUILD_ID", "ROLE_1_ID", "ROLE_2_ID", "ROLE_3_ID", and the fields in trape-327504-ce5999dc2d27.json with your actual token, client ID, guild ID, and role IDs. Additionally, replace all the placeholder fields in trape-327504-ce5999dc2d27.json with your actual Google Sheets API credentials.
 
 ## Contributing
 
